@@ -15,7 +15,7 @@ import time
 from datetime import date
 
 class SimpleHTTPClient(object):
-    '''简易客户端'''
+    '''Simple HTTP Client'''
     def __init__(self, ip=None, port=None):
         self.__current_path = os.getcwd()
         self.__store_path = self.__current_path + r'/download_' + str(date.today())
@@ -50,10 +50,10 @@ class SimpleHTTPClient(object):
                 continue
 
             if not each.endswith('/'):
-                # print "文件 " + dir + each
+                # file 
                 files.append(dir + each)
             else:
-                # print("創建文件夾 " + self.__store_path + dir + each)
+                # dir
                 dirs.append(dir + each)
                 # 
                 (deepFiles, deepDirs) = self.get_html_recursion(url, dir + each)
@@ -87,13 +87,13 @@ class SimpleHTTPClient(object):
         exits_num = 1
         for each in files:
             if self.exits(each):
-                print("%d - %s Exists." % (exits_num, each.split('/').pop()))
+                print("%d - %s Exists." % (exits_num, each.split('/').pop().decode('utf-8')))
                 exits_num += 1
                 continue
 
-            print("%s Downloading %s " % (str(i), each.split('/').pop()))
+            print("%s Downloading %s " % (str(i), each.split('/').pop().decode('utf-8')))
             i += 1
-            self.download(each)
+            self.download(each.decode('utf-8'))
             # time.sleep(1)
 
 if __name__ == '__main__':
