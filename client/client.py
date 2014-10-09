@@ -28,7 +28,8 @@ class SimpleHTTPClient(object):
         self.__real_url_head = 'http://' + self.__ip + ':' + self.__port
         self.__req = requests.Session()
 
-        self.__decode_type = 'utf-8' if decode_type == None else decode_type
+        #self.__decode_type = 'utf-8' if decode_type == None else decode_type
+        self.__decode_type = None
 
     def get_html_recursion(self, url, dir):
         
@@ -38,7 +39,9 @@ class SimpleHTTPClient(object):
         if not dir.endswith('/'):
             dir = dir + '/'
 
-        html = requests.get(url + dir).content
+        html_requsets_obj = requests.get(url + dir)
+        self.__decode_type = html_requsets_obj.apparent_encoding
+        html = html_requsets_obj.content
         # files_or_directorys = re.findall('<li><a href="(.*)">', html)
         files_or_directorys = re.findall('">(.*)</a>', html)
         
@@ -98,7 +101,7 @@ class SimpleHTTPClient(object):
 
 if __name__ == '__main__':
     if len(sys.argv) != 3 and len(sys.argv) != 4:
-        print("Usage:\n\t %s ip port [decode_type]" % (sys.argv[0]))
+        print("Usage:\n\t %s ip port [decode_type(default=utf-8)]" % (sys.argv[0]))
         exit(-1)
     if len(sys.argv) == 3:
         OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
