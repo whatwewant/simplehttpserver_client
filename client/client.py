@@ -16,7 +16,7 @@ from datetime import date
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
-    def __init__(self, ip=None, port=None, decode_type=None):
+    def __init__(self, ip=None, port=None, decode_type=None, encode_type=None):
         self.__current_path = os.getcwd()
         self.__store_path = self.__current_path + r'/download_' + str(date.today())
 
@@ -30,6 +30,7 @@ class SimpleHTTPClient(object):
 
         #self.__decode_type = 'utf-8' if decode_type == None else decode_type
         self.__decode_type = None
+        self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
 
     def get_html_recursion(self, url, dir):
         
@@ -80,8 +81,10 @@ class SimpleHTTPClient(object):
     def myrun(self):
         (files, dirs) = self.get_html_recursion(self.__real_url_head, '')
         for each in dirs:
-            if not os.path.exists(self.__store_path + each):
-                os.mkdir(self.__store_path + each)
+            path = self.__store_path + each
+            path = path.decode(self.__decode_type).encode(self.__encode_type)
+            if not os.path.exists(path):
+                os.mkdir(path)
 
         print('The Number of All The Files is: %s\n\n' % str(len(files)))
 
