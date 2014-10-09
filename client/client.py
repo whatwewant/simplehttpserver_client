@@ -74,7 +74,7 @@ class SimpleHTTPClient(object):
         # time.sleep(1)
 
     def myrun(self):
-        (files, dirs) = self.get_html_recursion('http://127.0.0.1:8000', '')
+        (files, dirs) = self.get_html_recursion(self.__real_url_head, '')
         for each in dirs:
             if not os.path.exists(self.__store_path + each):
                 os.mkdir(self.__store_path + each)
@@ -95,5 +95,8 @@ class SimpleHTTPClient(object):
             # time.sleep(1)
 
 if __name__ == '__main__':
-    OO = SimpleHTTPClient()
+    if len(sys.argv) != 3:
+        print("Usage:\n\t %s ip port" % (sys.argv[0]))
+
+    OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
     OO.myrun()
