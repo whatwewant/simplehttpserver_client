@@ -72,7 +72,7 @@ class SimpleHTTPClient(object):
 
     def download(self, filepath):
         file = self.__req.get(self.__real_url_head + filepath).content
-        with open(self.__store_path + filepath, 'w') as fp:
+        with open(self.__store_path + filepath, 'wb') as fp:
             fp.write(file)
         
         # time.sleep(1)
