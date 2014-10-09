@@ -17,8 +17,8 @@ from datetime import date
 class SimpleHTTPClient(object):
     '''简易客户端'''
     def __init__(self, ip=None, port=None):
-        self.__current_path = '' # os.getcwd() + '/'
-        self.__store_path = self.__current_path + './download' + str(date.today()) + '/'
+        self.__current_path = os.getcwd()
+        self.__store_path = self.__current_path + r'/download_' + str(date.today())
 
         if not os.path.exists(self.__store_path):
             os.mkdir(self.__store_path)
@@ -42,32 +42,58 @@ class SimpleHTTPClient(object):
         files_or_directorys = re.findall('<li><a href="(.*)">', html)
         
         files = []
+        dirs = []
         for each in files_or_directorys:
+            if each.startswith('.'):
+                continue
+
             if not each.endswith('/'):
-                print "文件 " + dir + each
+                # print "文件 " + dir + each
                 files.append(dir + each)
             else:
-                print("創建文件夾 " + self.__store_path + dir + each)
-                print self.__store_path + dir + each
+                # print("創建文件夾 " + self.__store_path + dir + each)
+                dirs.append(dir + each)
+                # 
+                (deepFiles, deepDirs) = self.get_html_recursion(url, dir + each)
+                for each in deepFiles:
+                    files.append(each)
+                for each in deepDirs:
+                    dirs.append(each)
+            # time.sleep(1)
 
-                #if not os.path.exists(self.__store_path + dir + each):
-                    #os.mkdir(self.__store_path + dir + each)
+        return (files, dirs)
 
-                for more in self.get_html_recursion(url, dir + each):
-                    files.append(more)
-            time.sleep(1)
+    def exits(self, filepath):
+        return os.path.isfile(self.__store_path + filepath)
 
-        return files
+    def download(self, filepath):
+        file = self.__req.get(self.__real_url_head + filepath).content
+        with open(self.__store_path + filepath, 'w') as fp:
+            fp.write(file)
+        
+        # time.sleep(1)
 
-    def download(self, file):
-        pass
+    def myrun(self):
+        (files, dirs) = self.get_html_recursion('http://127.0.0.1:8000', '')
+        for each in dirs:
+            if not os.path.exists(self.__store_path + each):
+                os.mkdir(self.__store_path + each)
 
-    def run(self):
-        files = self.get_html_recursion('http://127.0.0.1:8000', '.')
-        #for each in files:
-        #    print each
-        #    time.sleep(1)
+        print('The Number of All The Files is: %s' % str(len(files)))
+
+        i = 1
+        exits_num = 1
+        for each in files:
+            if self.exits(each):
+                print("%d - %s Exists." % (exits_num, each.split('/').pop()))
+                exits_num += 1
+                continue
+
+            print("%s Downloading %s " % (str(i), each.split('/').pop()))
+            i += 1
+            self.download(each)
+            # time.sleep(1)
 
 if __name__ == '__main__':
     OO = SimpleHTTPClient()
-    OO.run()
+    OO.myrun()
