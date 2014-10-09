@@ -97,7 +97,11 @@ class SimpleHTTPClient(object):
                 exits_num += 1
                 continue
 
-            print("%s Downloading %s " % (str(i), each.split('/').pop()))
+            try:
+                print("%s Downloading %s " % (str(i), each.split('/').pop()))
+            except :
+                pass
+
             i += 1
             self.download(each)
             # time.sleep(1)
