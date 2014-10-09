@@ -39,7 +39,9 @@ class SimpleHTTPClient(object):
             dir = dir + '/'
 
         html = requests.get(url + dir).content
-        files_or_directorys = re.findall('<li><a href="(.*)">', html)
+        # files_or_directorys = re.findall('<li><a href="(.*)">', html)
+        files_or_directorys = re.findall('">(.*)</a>', html)
+        print files_or_directorys
         
         files = []
         dirs = []
@@ -97,6 +99,7 @@ class SimpleHTTPClient(object):
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print("Usage:\n\t %s ip port" % (sys.argv[0]))
+        exit(-1)
 
     OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
     OO.myrun()
