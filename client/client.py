@@ -83,7 +83,7 @@ class SimpleHTTPClient(object):
             if not os.path.exists(self.__store_path + each):
                 os.mkdir(self.__store_path + each)
 
-        print('The Number of All The Files is: %s' % str(len(files)))
+        print('The Number of All The Files is: %s\n\n' % str(len(files)))
 
         i = 1
         exits_num = 1
@@ -101,7 +101,7 @@ class SimpleHTTPClient(object):
 
 if __name__ == '__main__':
     if len(sys.argv) != 3 and len(sys.argv) != 4:
-        print("Usage:\n\t %s ip port [decode_type(default=utf-8)]" % (sys.argv[0]))
+        print("Usage:\n\t %s ip port [decode_type(default=auto detect)]" % (sys.argv[0]))
         exit(-1)
     if len(sys.argv) == 3:
         OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
