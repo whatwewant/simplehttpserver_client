@@ -16,7 +16,7 @@ from datetime import date
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
-    def __init__(self, ip=None, port=None):
+    def __init__(self, ip=None, port=None, decode_type=None):
         self.__current_path = os.getcwd()
         self.__store_path = self.__current_path + r'/download_' + str(date.today())
 
@@ -28,7 +28,7 @@ class SimpleHTTPClient(object):
         self.__real_url_head = 'http://' + self.__ip + ':' + self.__port
         self.__req = requests.Session()
 
-        self.__html = None
+        self.__decode_type = 'utf-8' if decode_type == None else decode_type
 
     def get_html_recursion(self, url, dir):
         
@@ -85,20 +85,24 @@ class SimpleHTTPClient(object):
         i = 1
         exits_num = 1
         for each in files:
+            each = each.decode(self.__decode_type)
             if self.exits(each):
-                print("%d - %s Exists." % (exits_num, each.split('/').pop().decode('utf-8')))
+                print("%d - %s Exists." % (exits_num, each.split('/').pop()))
                 exits_num += 1
                 continue
 
-            print("%s Downloading %s " % (str(i), each.split('/').pop().decode('utf-8')))
+            print("%s Downloading %s " % (str(i), each.split('/').pop()))
             i += 1
-            self.download(each.decode('utf-8'))
+            self.download(each)
             # time.sleep(1)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage:\n\t %s ip port" % (sys.argv[0]))
+    if len(sys.argv) != 3 and len(sys.argv) != 4:
+        print("Usage:\n\t %s ip port [decode_type]" % (sys.argv[0]))
         exit(-1)
-
-    OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
-    OO.myrun()
+    if len(sys.argv) == 3:
+        OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
+        OO.myrun()
+    elif len(sys.argv) == 4:
+        OO = SimpleHTTPClient(sys.argv[1], sys.argv[2], sys.argv[3])
+        OO.myrun()
