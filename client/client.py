@@ -41,7 +41,6 @@ class SimpleHTTPClient(object):
         html = requests.get(url + dir).content
         # files_or_directorys = re.findall('<li><a href="(.*)">', html)
         files_or_directorys = re.findall('">(.*)</a>', html)
-        print files_or_directorys
         
         files = []
         dirs = []
