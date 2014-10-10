@@ -59,7 +59,7 @@ class SimpleHTTPClient(object):
         # print html_requsets_obj.headers.get('Content-Type')
         #self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
         self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
-        html = html_requsets_obj.content.decode(self.__decode_type)
+        html = html_requsets_obj.content#.decode(self.__decode_type)
         # files_or_directorys = re.findall('<li><a href="(.*)">', html)
         # files_or_directorys = re.findall('">(.*)</a>', html)
         url_compile = re.compile(r'<li><a href="(.*)">')
@@ -68,20 +68,20 @@ class SimpleHTTPClient(object):
         compile = re.compile(r'">(.*)</a>')
         files_or_directorys = compile.findall(str(html))
         
-        print len(urls)
-        print len(files_or_directorys)
         files_urls = list(zip(files_or_directorys, urls))
         files_urls_list = []
 
         #for each in files_or_directorys:
         for each in files_urls:
+            each = list(each)
+            each[0] = each[0].decode(self.__decode_type)
             # Not download .* files
             if each[0].startswith('.'):
-                files_urls.remove(each)
+                #files_urls.remove(each)
                 continue
             # Directory
             if each[0].endswith('/'):
-                files_urls.remove(each)
+                #files_urls.remove(each)
                 # print self.__store_path + dir + each[0]
                 # Create new directory
                 if not os.path.exists(self.__store_path + dir + each[0]):
@@ -93,7 +93,6 @@ class SimpleHTTPClient(object):
                 continue
             #import time
             # time.sleep(10)
-            each = list(each)
             each[0] = dir + each[0]
             each[1] = url.replace(self.__real_url_head, '') + each[1]
             files_urls_list.append(each)
