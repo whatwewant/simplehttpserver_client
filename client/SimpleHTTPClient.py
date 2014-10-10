@@ -19,12 +19,14 @@ if PYTHON_VERSION.startswith('2.'):
 import os
 sys.path.append('../site-packages')
 sys.path.append('../../site-packages')
+sys.path.append(os.path.dirname(__file__)+'/../site-packages')
 sys.path.append(os.path.dirname(__file__)+'/../../site-packages')
 
 import requests
 import re
 import os
 from datetime import date
+from download import download_url
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
@@ -85,10 +87,13 @@ class SimpleHTTPClient(object):
     def exits(self, filepath):
         return os.path.isfile(self.__store_path + filepath)
 
-    def download(self, filepath):
-        file = self.__req.get(self.__real_url_head + filepath).content
-        with open(self.__store_path + filepath, 'wb') as fp:
-            fp.write(file)
+    def download(self, filepath, number):
+        # file = self.__req.get(self.__real_url_head + filepath).content
+        # with open(self.__store_path + filepath, 'wb') as fp:
+        #    fp.write(file)
+        download_url(self.__real_url_head + filepath,
+                    self.__store_path + filepath, 
+                    number,)
         
         # time.sleep(1)
 
@@ -117,13 +122,14 @@ class SimpleHTTPClient(object):
                 exits_num += 1
                 continue
 
-            try:
-                print("%s Downloading %s " % (str(i), each.split('/').pop()))
-            except :
-                pass
+            #try:
+            #    print("%s Downloading %s " % (str(i), each.split('/').pop()))
+            #except :
+            #    pass
+            # print('%s ' % str(i), )
 
+            self.download(each, i)
             i += 1
-            self.download(each)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:

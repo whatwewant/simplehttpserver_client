@@ -17,5 +17,6 @@ setup (
               ],
     extras_require = {
         'requests': ['requests'],  
+        'download': ['download'],
     },
     )
