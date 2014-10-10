@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import platform
+PYTHON_VERSION = platform.python_version()
+print("PYTHON_VERSION: %s" % PYTHON_VERSION)
+
 import sys
+# To python2, reload function is build-in
+# To python3, reload function is not build-in function, it need be imported.
+from imp import reload
 reload(sys)
-sys.setdefaultencoding('utf-8')
+if PYTHON_VERSION.startswith('2.'):
+    sys.setdefaultencoding('utf-8') 
+    # python3 has not this function because it need not, it used the code of this file
+    # print(sys.getdefaultencoding())
 
 # site-packages path
 sys.path.append('./site-packages')
@@ -11,12 +21,11 @@ sys.path.append('./site-packages')
 import requests
 import re
 import os
-import time
 from datetime import date
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
-    def __init__(self, ip=None, port=None, decode_type=None, encode_type=None):
+    def __init__(self, ip=None, port=None):
         self.__current_path = os.getcwd()
         self.__store_path = self.__current_path + r'/download_' + str(date.today())
 
@@ -42,9 +51,11 @@ class SimpleHTTPClient(object):
 
         html_requsets_obj = requests.get(url + dir)
         self.__decode_type = html_requsets_obj.apparent_encoding
-        html = html_requsets_obj.content
+        html = html_requsets_obj.content.decode(self.__decode_type)
         # files_or_directorys = re.findall('<li><a href="(.*)">', html)
-        files_or_directorys = re.findall('">(.*)</a>', html)
+        # files_or_directorys = re.findall('">(.*)</a>', html)
+        compile = re.compile(r'">(.*)</a>')
+        files_or_directorys = compile.findall(str(html))
         
         files = []
         dirs = []
@@ -80,18 +91,24 @@ class SimpleHTTPClient(object):
 
     def myrun(self):
         (files, dirs) = self.get_html_recursion(self.__real_url_head, '')
+        
+        print('\nThe Number of All The Directories is : %d\n' % len(dirs))
+        print('The Number of All The Files is: %s\n' % str(len(files)))
+
         for each in dirs:
             path = self.__store_path + each
-            path = path.decode(self.__decode_type).encode(self.__encode_type)
+            #if PYTHON_VERSION.startswith('2'):
+            #    path = path.decode(self.__decode_type).encode(self.__encode_type)
+            #else:
+            path = path.encode(self.__encode_type)
+
             if not os.path.exists(path):
                 os.mkdir(path)
-
-        print('The Number of All The Files is: %s\n\n' % str(len(files)))
 
         i = 1
         exits_num = 1
         for each in files:
-            each = each.decode(self.__decode_type)
+            # each = each.decode(self.__decode_type)
             if self.exits(each):
                 print("%d - %s Exists." % (exits_num, each.split('/').pop()))
                 exits_num += 1
@@ -104,15 +121,11 @@ class SimpleHTTPClient(object):
 
             i += 1
             self.download(each)
-            # time.sleep(1)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3 and len(sys.argv) != 4:
-        print("Usage:\n\t %s ip port [decode_type(default=auto detect)]" % (sys.argv[0]))
+    if len(sys.argv) != 3:
+        print("Usage:\n\t %s IPAddr Port" % (sys.argv[0]))
         exit(-1)
-    if len(sys.argv) == 3:
-        OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
-        OO.myrun()
-    elif len(sys.argv) == 4:
-        OO = SimpleHTTPClient(sys.argv[1], sys.argv[2], sys.argv[3])
-        OO.myrun()
+
+    OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
+    OO.myrun()
