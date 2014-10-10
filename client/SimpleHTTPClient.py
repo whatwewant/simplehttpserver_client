@@ -16,7 +16,7 @@ if PYTHON_VERSION.startswith('2.'):
     # print(sys.getdefaultencoding())
 
 # site-packages path
-sys.path.append('./site-packages')
+sys.path.append('../site-packages')
 
 import requests
 import re

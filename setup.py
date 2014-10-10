@@ -3,6 +3,8 @@
 
 from setuptools import setup, find_packages
 
+print find_packages()
+
 setup (
     name = 'SimpleHTTPServerClient',
     version = '1.0',
@@ -11,7 +13,7 @@ setup (
     license = 'LGPL',
     packages = find_packages(),
     scripts = ['client/SimpleHTTPClient.py', 'server/SimpleHTTPServer.py'],
-    #extras_require = {
-    #    'requests': ['requests'],  
-    #},
+    extras_require = {
+        'requests': ['requests'],  
+    },
     )
