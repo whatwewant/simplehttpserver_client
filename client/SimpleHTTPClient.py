@@ -30,7 +30,10 @@ from download import download_url
 
 import traceback
 
+logdir = os.path.join(os.path.dirname(__file__), '../log')
 log = os.path.join(os.path.dirname(__file__), '../log/client.log')
+if not os.path.exists(logdir): 
+    os.mkdir(logdir)
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
@@ -113,7 +116,7 @@ class SimpleHTTPClient(object):
         # print self.__real_url_head + file_path
         download_url(self.__real_url_head +file_url,
                     self.__store_path + file_path, 
-                    number,)
+                    number, log, )
         
         # time.sleep(1)
 
@@ -125,7 +128,8 @@ class SimpleHTTPClient(object):
         #    time.sleep(1)
 
         # print('\nThe Number of All The Directories is : %d\n' % len(dirs))
-        print('The Number of All The Files is: %s\n' % str(len(files_urls)))
+        print('The Number of All The Files is: %s' % str(len(files_urls)))
+        print('Log: %s\n' % log)
 
         #for each in dirs:
         #    path = self.__store_path + each
@@ -158,6 +162,9 @@ class SimpleHTTPClient(object):
 
             self.download(each[1], each[0], i)
             i += 1
+        # Info
+        print('The Number of All The Files is: %s' % str(len(files_urls)))
+        print('Log: %s\n' % log)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
