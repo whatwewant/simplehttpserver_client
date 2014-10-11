@@ -42,7 +42,6 @@ class SimpleHTTPClient(object):
         self.__real_url_head = 'http://' + self.__ip + ':' + self.__port
         self.__req = requests.Session()
 
-        #self.__decode_type = 'utf-8' if decode_type == None else decode_type
         self.__decode_type = None
         self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
 
@@ -55,13 +54,9 @@ class SimpleHTTPClient(object):
             dir = dir + '/'
 
         html_requsets_obj = requests.get(url)
-        # self.__decode_type = html_requsets_obj.apparent_encoding
-        # print html_requsets_obj.headers.get('Content-Type')
-        #self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
         self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
         html = html_requsets_obj.content#.decode(self.__decode_type)
-        # files_or_directorys = re.findall('<li><a href="(.*)">', html)
-        # files_or_directorys = re.findall('">(.*)</a>', html)
+
         url_compile = re.compile(r'<li><a href="(.*)">')
         urls = url_compile.findall(str(html))
 
@@ -71,18 +66,14 @@ class SimpleHTTPClient(object):
         files_urls = list(zip(files_or_directorys, urls))
         files_urls_list = []
 
-        #for each in files_or_directorys:
         for each in files_urls:
             each = list(each)
             each[0] = each[0].decode(self.__decode_type)
             # Not download .* files
             if each[0].startswith('.'):
-                #files_urls.remove(each)
                 continue
             # Directory
             if each[0].endswith('/'):
-                #files_urls.remove(each)
-                # print self.__store_path + dir + each[0]
                 # Create new directory
                 if not os.path.exists(self.__store_path + dir + each[0]):
                     os.mkdir(self.__store_path + dir + each[0])
@@ -91,8 +82,6 @@ class SimpleHTTPClient(object):
                     files_urls_list.append(deep_fu)
 
                 continue
-            #import time
-            # time.sleep(10)
             each[0] = dir + each[0]
             each[1] = url.replace(self.__real_url_head, '') + each[1]
             files_urls_list.append(each)
@@ -103,50 +92,22 @@ class SimpleHTTPClient(object):
         return os.path.isfile(self.__store_path + filepath)
 
     def download(self, file_url, file_path, number):
-        # file = self.__req.get(self.__real_url_head + filepath).content
-        # with open(self.__store_path + filepath, 'wb') as fp:
-        #    fp.write(file)
-        # print self.__real_url_head + file_path
         download_url(self.__real_url_head +file_url,
                     self.__store_path + file_path, 
                     number,)
         
-        # time.sleep(1)
-
     def myrun(self):
         files_urls = self.get_html_recursion(self.__real_url_head, '')
-        #for i in files_urls:
-        #    print i[0]
-        #    import time
-        #    time.sleep(1)
 
-        # print('\nThe Number of All The Directories is : %d\n' % len(dirs))
         print('The Number of All The Files is: %s\n' % str(len(files_urls)))
-
-        #for each in dirs:
-        #    path = self.__store_path + each
-            #if PYTHON_VERSION.startswith('2'):
-            #    path = path.decode(self.__decode_type).encode(self.__encode_type)
-            #else:
-        #    path = path.encode(self.__encode_type)
-
-        #    if not os.path.exists(path):
-        #        os.mkdir(path)
 
         i = 1
         exits_num = 1
         for each in files_urls:
-            # each = each.decode(self.__decode_type)
             if self.exits(each[0]):
                 print("%d - %s Exists." % (exits_num, each[0].split('/').pop()))
                 exits_num += 1
                 continue
-
-            #try:
-            #    print("%s Downloading %s " % (str(i), each.split('/').pop()))
-            #except :
-            #    pass
-            # print('%s ' % str(i), )
 
             self.download(each[1], each[0], i)
             i += 1
