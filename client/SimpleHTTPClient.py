@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import math
 import platform
-PYTHON_VERSION = platform.python_version()
-print("PYTHON_VERSION: %s" % PYTHON_VERSION)
 
 import sys
 # To python2, reload function is build-in
 # To python3, reload function is not build-in function, it need be imported.
 from imp import reload
 reload(sys)
+
+PYTHON_VERSION = platform.python_version()
+print("PYTHON_VERSION: %s" % PYTHON_VERSION)
+
 if PYTHON_VERSION.startswith('2.'):
     sys.setdefaultencoding('utf-8') 
     # python3 has not this function because it need not, it used the code of this file
@@ -54,6 +57,8 @@ class SimpleHTTPClient(object):
         #self.__decode_type = 'utf-8' if decode_type == None else decode_type
         self.__decode_type = None
         self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
+        # All Files SIZE 
+        self.__max_file_size = 0
 
     def get_html_recursion(self, url, dir):
         
@@ -121,9 +126,10 @@ class SimpleHTTPClient(object):
         # with open(self.__store_path + filepath, 'wb') as fp:
         #    fp.write(file)
         # print self.__real_url_head + file_path
-        download_url(self.__real_url_head +file_url,
-                    self.__store_path + file_path, 
-                    number, log, )
+        url = self.__real_url_head + file_url
+        path = self.__store_path + file_path
+        self.__max_file_size += int(requests.head(url).headers.get('Content-Length', 0))
+        download_url(url, path, number, log, )
         
         # time.sleep(1)
 
@@ -169,8 +175,23 @@ class SimpleHTTPClient(object):
 
             self.download(each[1], each[0], i)
             i += 1
+
+        # Files Size
+        file_size_unit = 'byte'
+        file_size = 0.0
+        if self.__max_file_size > math.pow(2, 30):
+            file_size = self.__max_file_size / math.pow(2, 30)
+            file_size_unit = 'G'
+        elif self.__max_file_size > math.pow(2, 20):
+            file_size = self.__max_file_size / math.pow(2, 20)
+            file_size_unit = 'M'
+        elif self.__max_file_size > math.pow(2, 10):
+            file_size = self.__max_file_size / math.pow(2, 10)
+            file_size_unit = 'K'
+
         # Info
-        print('The Number of All The Files is: %s' % str(len(files_urls)))
+        print('\nThe Number of All The Files : %s' % str(len(files_urls)))
+        print('The Size Of All Files : %.2f%s' % (file_size, file_size_unit))
         print('Log: %s\n' % log)
 
 if __name__ == '__main__':
