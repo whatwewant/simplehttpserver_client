@@ -148,8 +148,7 @@ class SimpleHTTPClient(object):
                 except:
                     with open(log, 'a') as f:
                         traceback.print_exc(file=f)
-                finally:
-                    continue
+                continue
 
             #try:
             #    print("%s Downloading %s " % (str(i), each.split('/').pop()))
