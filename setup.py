@@ -11,7 +11,7 @@ setup (
     license = 'LGPL',
     packages = find_packages(),
     scripts = ['client/SimpleHTTPClient.py', 
-               'server/SimpleHTTPServer.py',
+               'server/HTTPServer.py',
                'server/server_python2.py',
                'server/server_python3.py',
               ],
