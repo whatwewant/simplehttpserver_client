@@ -37,7 +37,7 @@ if __name__ == '__main__':
     #Current Dir
     if prefix != '':
         chdir = prefix.strip().replace('--prefix=', '')
-        chdir = chdir.replace('~', os.environ.get('HOME'))
+        chdir = chdir.replace('~', os.environ.get('HOME', '.'))
         os.chdir(chdir)
     print(PYTHON_VERSION)
     print('Current Directory: %s\n' % os.getcwd())
