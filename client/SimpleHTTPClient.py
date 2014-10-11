@@ -30,7 +30,7 @@ from download import download_url
 
 import traceback
 
-log = os.path.join(os.path.dirname('__file__'), '../log/client.log')
+log = os.path.join(os.path.dirname(__file__), '../log/client.log')
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
@@ -160,6 +160,8 @@ class SimpleHTTPClient(object):
             i += 1
 
 if __name__ == '__main__':
+    print log
+    exit(-1)
     if len(sys.argv) != 3:
         print("Usage:\n\t %s IPAddr Port" % (sys.argv[0]))
         exit(-1)
