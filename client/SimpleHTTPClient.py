@@ -28,6 +28,10 @@ import os
 from datetime import date
 from download import download_url
 
+import traceback
+
+log = os.path.join(os.path.dirname('__file__'), '../log/client.log')
+
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
     def __init__(self, ip=None, port=None):
@@ -138,9 +142,14 @@ class SimpleHTTPClient(object):
         for each in files_urls:
             # each = each.decode(self.__decode_type)
             if self.exits(each[0]):
-                print("%d - %s Exists." % (exits_num, each[0].split('/').pop()))
-                exits_num += 1
-                continue
+                try:
+                    print("%d - %s Exists." % (exits_num, each[0].split('/').pop()))
+                    exits_num += 1
+                except:
+                    with open(log, 'a') as f:
+                        traceback.print_exc(file=f)
+                finally:
+                    continue
 
             #try:
             #    print("%s Downloading %s " % (str(i), each.split('/').pop()))
