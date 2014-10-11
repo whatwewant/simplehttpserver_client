@@ -58,7 +58,8 @@ class SimpleHTTPClient(object):
         self.__decode_type = None
         self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
         # All Files SIZE 
-        self.__max_file_size = 0
+        self.__target_file_size = 0
+        self.__real_file_size = 0
 
     def get_html_recursion(self, url, dir):
         
@@ -115,6 +116,8 @@ class SimpleHTTPClient(object):
             each[0] = dir + each[0]
             each[1] = url.replace(self.__real_url_head, '') + each[1]
             files_urls_list.append(each)
+            # Calculate Target Files Size
+            self.__target_file_size += int(requests.head(self.__real_url_head + each[1]).headers.get('Content-Length', 0))
 
         return files_urls_list
 
@@ -128,8 +131,8 @@ class SimpleHTTPClient(object):
         # print self.__real_url_head + file_path
         url = self.__real_url_head + file_url
         path = self.__store_path + file_path
-        self.__max_file_size += int(requests.head(url).headers.get('Content-Length', 0))
-        download_url(url, path, number, log, )
+        percent = self.__real_file_size * 100 / float(self.__target_file_size)
+        self.__real_file_size += download_url(url, path, number, log, percent)
         
         # time.sleep(1)
 
@@ -179,19 +182,29 @@ class SimpleHTTPClient(object):
         # Files Size
         file_size_unit = 'byte'
         file_size = 0.0
-        if self.__max_file_size > math.pow(2, 30):
-            file_size = self.__max_file_size / math.pow(2, 30)
+        target_size = 0.0
+        if self.__target_file_size > math.pow(2, 30):
+            file_size = self.__real_file_size / math.pow(2, 30)
+            target_size = self.__target_file_size / math.pow(2, 30)
             file_size_unit = 'G'
-        elif self.__max_file_size > math.pow(2, 20):
-            file_size = self.__max_file_size / math.pow(2, 20)
+        elif self.__target_file_size > math.pow(2, 20):
+            file_size = self.__real_file_size / math.pow(2, 20)
+            target_size = self.__target_file_size / math.pow(2, 20)
             file_size_unit = 'M'
-        elif self.__max_file_size > math.pow(2, 10):
-            file_size = self.__max_file_size / math.pow(2, 10)
+        elif self.__target_file_size > math.pow(2, 10):
+            file_size = self.__real_file_size / math.pow(2, 10)
+            target_size = self.__target_file_size / math.pow(2, 10)
             file_size_unit = 'K'
 
         # Info
-        print('\nThe Number of All The Files : %s' % str(len(files_urls)))
-        print('The Size Of All Files : %.2f%s' % (file_size, file_size_unit))
+        print('\n\nThe Number of All The Files : %s' % str(len(files_urls)))
+        print('The Size Of All Files : %.2f%s / %3.2f%s [ %.2f%% ]' % \
+              (file_size, \
+               file_size_unit, \
+               target_size, \
+               file_size_unit, \
+               self.__real_file_size * 100 / float(self.__target_file_size), \
+              ))
         print('Log: %s\n' % log)
 
 if __name__ == '__main__':
