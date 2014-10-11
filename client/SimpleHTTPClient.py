@@ -25,7 +25,7 @@ sys.path.append(os.path.dirname(__file__)+'/../../site-packages')
 import requests
 import re
 import os
-from datetime import date
+from datetime import date, datetime
 from download import download_url
 
 import traceback
@@ -35,7 +35,7 @@ log = os.path.join(os.path.dirname(__file__), '../log/client.log')
 if not os.path.exists(logdir): 
     os.mkdir(logdir)
 with open(log, 'w') as f:
-    f.write(str(date.today()) + '\n')
+    f.write(str(datetime.today()) + '\n')
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
@@ -83,7 +83,12 @@ class SimpleHTTPClient(object):
         #for each in files_or_directorys:
         for each in files_urls:
             each = list(each)
-            each[0] = each[0].decode(self.__decode_type)
+            #try:
+            each[0] = each[0].decode(self.__decode_type, 'ignore')
+            #except UnicodeDecodeError:
+            #    print each[0].decode(self.__decode_type, 'ignore')
+            #    each[0] = each[0].decode(self.__decode_type)
+
             # Not download .* files
             if each[0].startswith('.'):
                 #files_urls.remove(each)
