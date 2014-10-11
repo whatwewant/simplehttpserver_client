@@ -35,7 +35,7 @@ log = os.path.join(os.path.dirname(__file__), '../log/client.log')
 if not os.path.exists(logdir): 
     os.mkdir(logdir)
 with open(log, 'w') as f:
-    f.write(str(date.today()))
+    f.write(str(date.today()) + '\n')
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
