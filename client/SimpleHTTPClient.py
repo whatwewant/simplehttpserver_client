@@ -2,6 +2,7 @@
 # coding=utf-8
 
 import math
+import time
 import platform
 
 import sys
@@ -11,7 +12,7 @@ from imp import reload
 reload(sys)
 
 PYTHON_VERSION = platform.python_version()
-print("PYTHON_VERSION: %s" % PYTHON_VERSION)
+print("PYTHON_VERSION: %s \n%s" % (PYTHON_VERSION, time.ctime()))
 
 if PYTHON_VERSION.startswith('2.'):
     sys.setdefaultencoding('utf-8') 
@@ -107,7 +108,7 @@ class SimpleHTTPClient(object):
             if each[0].endswith('/'):
                 # Target Dirs Count
                 self.__target_dir_count += 1
-                sys.stdout.write('Files Count %d; Dirs Count: %d \r' % (self.__target_file_count, self.__target_dir_count))
+                sys.stdout.write('[ %s ] Files Count %d; Dirs Count: %d\r' % (time.ctime(), self.__target_file_count, self.__target_dir_count))
                 sys.stdout.flush()
                 # Create new directory
                 if not os.path.exists(self.__store_path + dir + each[0]):
@@ -125,7 +126,7 @@ class SimpleHTTPClient(object):
             # Count Files
             self.__target_file_count += 1
             # Calculate Target Files Size
-            self.__target_file_size += int(requests.head(self.__real_url_head + each[1]).headers.get('Content-Length', 0))
+            sys.stdout.write('[ %s ] Files Count %d; Dirs Count: %d\r' % (time.ctime(), self.__target_file_count, self.__target_dir_count))
             # Show Files Count
             sys.stdout.write('Files Count %d; Dirs Count: %d \r' % (self.__target_file_count, self.__target_dir_count))
             sys.stdout.flush()
@@ -142,7 +143,7 @@ class SimpleHTTPClient(object):
         # print self.__real_url_head + file_path
         url = self.__real_url_head + file_url
         path = self.__store_path + file_path
-        percent = self.__real_file_size * 100 / float(self.__target_file_size)
+        percent = 1 if self.__target_file_size < 1 else self.__real_file_size * 100 / float(self.__target_file_size)
         self.__real_file_size += download_url(url, path, number, log, percent)
         
         # time.sleep(1)
@@ -155,7 +156,7 @@ class SimpleHTTPClient(object):
         #    time.sleep(1)
 
         # print('\nThe Number of All The Directories is : %d\n' % len(dirs))
-        print('The Number of All The Files is: %s' % str(len(files_urls)))
+        print('\n\nThe Number of All The Files is: %s' % str(len(files_urls)))
         print('Log: %s\n' % log)
 
         #for each in dirs:
