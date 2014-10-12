@@ -96,7 +96,7 @@ class SimpleHTTPClient(object):
             #    each[0] = each[0].decode(self.__decode_type)
 
             # Not download .* files
-            if each[0].startswith('.'):
+            if each[0].startswith('.git'):
                 #files_urls.remove(each)
                 continue
             # Directory
