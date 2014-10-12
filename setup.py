@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup (
     name = 'SimpleHTTPServerClient',
-    version = '1.0',
+    version = '2.0',
     description = 'SimpleHTTP Server - Client',
     url = 'http://dogeplan.com',
     license = 'LGPL',
