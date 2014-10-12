@@ -57,6 +57,10 @@ class SimpleHTTPClient(object):
         #self.__decode_type = 'utf-8' if decode_type == None else decode_type
         self.__decode_type = None
         self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
+        # All Dirs Count
+        self.__target_dir_count = 0
+        # All Files Count
+        self.__target_file_count = 0
         # All Files SIZE 
         self.__target_file_size = 0
         self.__real_file_size = 0
@@ -101,8 +105,10 @@ class SimpleHTTPClient(object):
                 continue
             # Directory
             if each[0].endswith('/'):
-                #files_urls.remove(each)
-                # print self.__store_path + dir + each[0]
+                # Target Dirs Count
+                self.__target_dir_count += 1
+                sys.stdout.write('Files Count %d; Dirs Count: %d \r' % (self.__target_file_count, self.__target_dir_count))
+                sys.stdout.flush()
                 # Create new directory
                 if not os.path.exists(self.__store_path + dir + each[0]):
                     os.mkdir(self.__store_path + dir + each[0])
@@ -116,8 +122,13 @@ class SimpleHTTPClient(object):
             each[0] = dir + each[0]
             each[1] = url.replace(self.__real_url_head, '') + each[1]
             files_urls_list.append(each)
+            # Count Files
+            self.__target_file_count += 1
             # Calculate Target Files Size
             self.__target_file_size += int(requests.head(self.__real_url_head + each[1]).headers.get('Content-Length', 0))
+            # Show Files Count
+            sys.stdout.write('Files Count %d; Dirs Count: %d \r' % (self.__target_file_count, self.__target_dir_count))
+            sys.stdout.flush()
 
         return files_urls_list
 
@@ -197,7 +208,8 @@ class SimpleHTTPClient(object):
             file_size_unit = 'K'
 
         # Info
-        print('\n\nThe Number of All The Files : %s' % str(len(files_urls)))
+        print('\n\nThe Number of All The Dirs : %d' % (self.__target_dir_count))
+        print('The Number of All The Files : %s' % str(len(files_urls)))
         print('The Size Of All Files : %.2f%s / %3.2f%s [ %.2f%% ]' % \
               (file_size, \
                file_size_unit, \
