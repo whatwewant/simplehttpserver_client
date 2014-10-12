@@ -16,7 +16,6 @@ print("PYTHON_VERSION: %s" % PYTHON_VERSION)
 if PYTHON_VERSION.startswith('2.'):
     sys.setdefaultencoding('utf-8') 
     # python3 has not this function because it need not, it used the code of this file
-    # print(sys.getdefaultencoding())
 
 # site-packages path
 import os
@@ -70,8 +69,7 @@ class SimpleHTTPClient(object):
 
         html_requsets_obj = requests.get(url)
         self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
-        html = html_requsets_obj.content#.decode(self.__decode_type)
-
+        html = html_requsets_obj.content
         url_compile = re.compile(r'<li><a href="(.*)">')
         urls = url_compile.findall(str(html))
 
@@ -83,11 +81,7 @@ class SimpleHTTPClient(object):
 
         for each in files_urls:
             each = list(each)
-            #try:
             each[0] = each[0].decode(self.__decode_type, 'ignore')
-            #except UnicodeDecodeError:
-            #    print each[0].decode(self.__decode_type, 'ignore')
-            #    each[0] = each[0].decode(self.__decode_type)
 
             # Not download .* files
             if each[0].startswith('.'):
@@ -114,31 +108,18 @@ class SimpleHTTPClient(object):
         return os.path.isfile(self.__store_path + filepath)
 
     def download(self, file_url, file_path, number):
-<<<<<<< HEAD
-        download_url(self.__real_url_head +file_url,
-                    self.__store_path + file_path, 
-                    number,)
-=======
-        # file = self.__req.get(self.__real_url_head + filepath).content
-        # with open(self.__store_path + filepath, 'wb') as fp:
-        #    fp.write(file)
-        # print self.__real_url_head + file_path
         url = self.__real_url_head + file_url
         path = self.__store_path + file_path
         percent = self.__real_file_size * 100 / float(self.__target_file_size)
         self.__real_file_size += download_url(url, path, number, log, percent)
->>>>>>> develop
         
+        # time.sleep(1)
+
     def myrun(self):
         files_urls = self.get_html_recursion(self.__real_url_head, '')
-
-<<<<<<< HEAD
-        print('The Number of All The Files is: %s\n' % str(len(files_urls)))
-=======
         # print('\nThe Number of All The Directories is : %d\n' % len(dirs))
         print('The Number of All The Files is: %s' % str(len(files_urls)))
         print('Log: %s\n' % log)
->>>>>>> develop
 
         i = 1
         exits_num = 1
