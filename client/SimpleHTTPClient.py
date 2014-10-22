@@ -144,7 +144,9 @@ class SimpleHTTPClient(object):
         url = self.__real_url_head + file_url
         path = self.__store_path + file_path
         percent = 1 if self.__target_file_size < 1 else self.__real_file_size * 100 / float(self.__target_file_size)
-        self.__real_file_size += download_url(url, path, number, log, percent)
+        (target_size, real_size) = download_url(url, path, number, log, percent)
+        self.__target_file_size += target_size
+        self.__real_file_size += real_size
         
         # time.sleep(1)
 
@@ -211,13 +213,22 @@ class SimpleHTTPClient(object):
         # Info
         print('\n\nThe Number of All The Dirs : %d' % (self.__target_dir_count))
         print('The Number of All The Files : %s' % str(len(files_urls)))
-        print('The Size Of All Files : %.2f%s / %3.2f%s [ %.2f%% ]' % \
-              (file_size, \
-               file_size_unit, \
-               target_size, \
-               file_size_unit, \
-               self.__real_file_size * 100 / float(self.__target_file_size), \
-              ))
+        if self.__target_file_size > 0:
+            print('The Size Of All Files : %.2f%s / %3.2f%s [ %.2f%% ]' % \
+                  (file_size, \
+                   file_size_unit, \
+                   target_size, \
+                   file_size_unit, \
+                   self.__real_file_size * 100 / float(self.__target_file_size), \
+                  ))
+        else:
+            print('The Size Of All Files : %.2f%s / %3.2f%s [ %.2f%% ]' % \
+                  (file_size, \
+                   file_size_unit, \
+                   target_size, \
+                   file_size_unit, \
+                   100,\
+                  ))
         print('Log: %s\n' % log)
 
 if __name__ == '__main__':
