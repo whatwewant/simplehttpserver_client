@@ -112,7 +112,8 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.send_error(400, 'Bad Range Specified')
                 f.close()
                 raise
-            self.send_header('Content-Length', str(fs[6] - pos))
+            #self.send_header('Content-Length', str(fs[6] - pos))
+            self.send_header('Content-Length', str(fs[6]))
             self.send_header('Last-Modified', self.date_time_string(fs.st_mtime))
             start = start.replace('=', ' ')
             self.send_header('Content-Range', '%s%s/%s' % (start, full-1, full))
