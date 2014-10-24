@@ -91,6 +91,35 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         except IOError:
             self.send_error(404, "File not found")
             return None
+        if self.headers.get('Range'):
+            # partial content all treated here.
+            # we do not support If-Range request.
+            # range could only be of the form
+            #   Range: bytes=9855420-
+            start = self.headers.get('Range')
+            try:
+                pos = int(start[6:-1])
+            except ValueError:
+                self.send_error(400, 'Bad Range Specified')
+                f.close()
+                raise
+            self.send_response(206)
+            self.send_header('Content-type', ctype)
+            #self.send_header('Connection', 'keep-alive')
+            fs = os.fstat(f.fileno())
+            full = fs.st_size
+            if full < pos:
+                self.send_error(400, 'Bad Range Specified')
+                f.close()
+                raise
+            self.send_header('Content-Length', str(fs[6] - pos))
+            self.send_header('Last-Modified', self.date_time_string(fs.st_mtime))
+            start = start.replace('=', ' ')
+            self.send_header('Content-Range', '%s%s/%s' % (start, full-1, full))
+            self.end_headers()
+            f.seek(pos)
+            return f
+
         try:
             self.send_response(200)
             self.send_header("Content-type", ctype)
