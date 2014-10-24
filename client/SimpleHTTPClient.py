@@ -178,7 +178,7 @@ class SimpleHTTPClient(object):
         for each in files_urls:
             # each = each.decode(self.__decode_type)
             if self.exits(each[0]):
-                exists_file_size = len(open(self.__store_path + each[0]).read())
+                exists_file_size = os.path.getsize(self.__store_path + each[0])
                 download_size = int(requests.head(self.__real_url_head + each[1]).headers.get('Content-Length'))
                 try:
                     if exists_file_size == download_size:
@@ -188,6 +188,7 @@ class SimpleHTTPClient(object):
                         print("%d - %s modify size from %dbit -> %dbit." % (exits_num, 
                             each[0].split('/').pop(), exists_file_size, download_size))
                         self.download(each[1], each[0], i)
+                    i += 1
                 except:
                     with open(log, 'a') as f:
                         traceback.print_exc(file=f)

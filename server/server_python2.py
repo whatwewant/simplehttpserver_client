@@ -117,6 +117,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header('Last-Modified', self.date_time_string(fs.st_mtime))
             start = start.replace('=', ' ')
             self.send_header('Content-Range', '%s%s/%s' % (start, full-1, full))
+            self.send_header('Accept-Range', 'bytes')
             self.end_headers()
             f.seek(pos)
             return f
