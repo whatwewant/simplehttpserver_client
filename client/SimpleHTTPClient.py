@@ -126,7 +126,7 @@ class SimpleHTTPClient(object):
             # Count Files
             self.__target_file_count += 1
             # Calculate Target Files Size
-            print self.__real_url_head + each[1]
+            # print self.__real_url_head + each[1]
             self.__target_file_size += int(requests.head(self.__real_url_head + each[1]).headers.get('Content-Length'))
 
             sys.stdout.write('[ %s ] Files Count %d; Dirs Count: %d\r' % (time.ctime(), self.__target_file_count, self.__target_dir_count))
