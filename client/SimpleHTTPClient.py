@@ -30,7 +30,7 @@ import requests
 import re
 import os
 from datetime import date, datetime
-from download import download_url
+from download import Download
 
 import traceback
 
@@ -126,6 +126,7 @@ class SimpleHTTPClient(object):
             # Count Files
             self.__target_file_count += 1
             # Calculate Target Files Size
+            print self.__real_url_head + each[1]
             self.__target_file_size += int(requests.head(self.__real_url_head + each[1]).headers.get('Content-Length'))
 
             sys.stdout.write('[ %s ] Files Count %d; Dirs Count: %d\r' % (time.ctime(), self.__target_file_count, self.__target_dir_count))
@@ -143,10 +144,15 @@ class SimpleHTTPClient(object):
         # with open(self.__store_path + filepath, 'wb') as fp:
         #    fp.write(file)
         # print self.__real_url_head + file_path
+        download = Download()
+        download_url = download.download
         url = self.__real_url_head + file_url
         path = self.__store_path + file_path
-        percent = 1 if self.__target_file_size < 1 else self.__real_file_size * 100 / float(self.__target_file_size)
-        (target_size, real_size) = download_url(url, path, number, log, percent)
+        file_name = path.split('/').pop()
+        file_path = path.replace(file_name, '')
+        # percent = 1 if self.__target_file_size < 1 else self.__real_file_size * 100 / float(self.__target_file_size)
+        # (target_size, real_size) = download_url(url, path, number, log, percent)
+        (target_size, real_size) = download_url(url, file_name, file_path, number)
         # self.__target_file_size += target_size
         self.__real_file_size += real_size
         
