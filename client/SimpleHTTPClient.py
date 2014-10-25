@@ -152,7 +152,7 @@ class SimpleHTTPClient(object):
         file_path = path.replace(file_name, '')
         # percent = 1 if self.__target_file_size < 1 else self.__real_file_size * 100 / float(self.__target_file_size)
         # (target_size, real_size) = download_url(url, path, number, log, percent)
-        (target_size, real_size) = download_url(url, file_name, file_path, number)
+        (target_size, real_size) = download_url(url, file_name, file_path, int(number))
         # self.__target_file_size += target_size
         self.__real_file_size += real_size
         
