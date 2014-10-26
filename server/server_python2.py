@@ -117,7 +117,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header('Last-Modified', self.date_time_string(fs.st_mtime))
             start = start.replace('=', ' ')
             self.send_header('Content-Range', '%s%s/%s' % (start, full-1, full))
-            self.send_header('Accept-Range', 'bytes')
+            self.send_header('Accept-Ranges', 'bytes')
             self.end_headers()
             f.seek(pos)
             return f
@@ -128,7 +128,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             fs = os.fstat(f.fileno())
             self.send_header("Content-Length", str(fs[6]))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
-            self.send_header('Accept-Range', 'bytes')
+            self.send_header('Accept-Ranges', 'bytes')
             self.end_headers()
             return f
         except:
