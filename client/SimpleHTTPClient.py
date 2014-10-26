@@ -127,7 +127,10 @@ class SimpleHTTPClient(object):
             self.__target_file_count += 1
             # Calculate Target Files Size
             # print self.__real_url_head + each[1]
-            self.__target_file_size += int(requests.head(self.__real_url_head + each[1]).headers.get('Content-Length'))
+            head = requests.head(self.__real_url_head + each[1])
+            if not head.ok:
+                break
+            self.__target_file_size += int(head.headers.get('Content-Length'))
 
             sys.stdout.write('[ %s ] Files Count %d; Dirs Count: %d\r' % (time.ctime(), self.__target_file_count, self.__target_dir_count))
             # Show Files Count
@@ -149,7 +152,8 @@ class SimpleHTTPClient(object):
         url = self.__real_url_head + file_url
         path = self.__store_path + file_path
         file_name = path.split('/').pop()
-        file_path = path.replace(file_name, '')
+        file_name_size = len(file_name)
+        file_path = path[:-file_name_size-1]
         # percent = 1 if self.__target_file_size < 1 else self.__real_file_size * 100 / float(self.__target_file_size)
         # (target_size, real_size) = download_url(url, path, number, log, percent)
         (target_size, real_size) = download_url(url, file_name, file_path, int(number))
