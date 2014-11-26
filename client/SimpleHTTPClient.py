@@ -55,10 +55,14 @@ class SimpleHTTPClient(object):
         self.__real_url_head = 'http://' + self.__ip + ':' + self.__port
         self.__req = requests.Session()
 
-        #self.__decode_type = 'utf-8' if decode_type == None else decode_type
+        #  原网页编码,一般是服务器的系统编码,
+        #  如何获得? requests.encoding
         self.__decode_type = None
+        # 要编码成当前系统的编码
         self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
-        self.__system_encoding = sys.getdefaultencoding() if sys.getdefaultencoding() != 'mbcs' else 'gbk'
+        # 系统编码系统
+        self.__system_encoding = sys.getfilesystemencoding() if \
+                sys.getfilesystemencoding() != 'mbcs' else 'gbk'
         # All Dirs Count
         self.__target_dir_count = 0
         # All Files Count
