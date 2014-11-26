@@ -82,7 +82,7 @@ class SimpleHTTPClient(object):
         self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
         html = html_requsets_obj.content\
                 .decode(self.__decode_type)\
-                .encode(self.__system_encoding)
+                .encode(self.__encode_type)
         # files_or_directorys = re.findall('<li><a href="(.*)">', html)
         # files_or_directorys = re.findall('">(.*)</a>', html)
         # url_compile = re.compile(r'<li><a href="(.*)">')
