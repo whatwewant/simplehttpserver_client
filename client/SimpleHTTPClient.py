@@ -31,6 +31,7 @@ import re
 import os
 from datetime import date, datetime
 from download import Download
+from urllib import urlencode
 
 import traceback
 
@@ -43,7 +44,7 @@ with open(log, 'w') as f:
 
 class SimpleHTTPClient(object):
     '''Simple HTTP Client'''
-    def __init__(self, ip=None, port=None):
+    def __init__(self, ip=None, port=None, url=None):
         self.__current_path = os.getcwd()
         self.__store_path = self.__current_path + r'/download_' + str(date.today())
 
@@ -53,6 +54,11 @@ class SimpleHTTPClient(object):
         self.__ip = '127.0.0.1' if ip == None else ip
         self.__port = '8000' if port == None else port
         self.__real_url_head = 'http://' + self.__ip + ':' + self.__port
+        if url:
+            try:
+                self.__real_url_head = urlencode(url)
+            except TypeError:
+                self.__real_url_head = url
         self.__req = requests.Session()
 
         #  原网页编码,一般是服务器的系统编码,
@@ -210,9 +216,14 @@ class SimpleHTTPClient(object):
         print('Log: %s\n' % log)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    if len(sys.argv) <= 1 or len(sys.argv) >= 4:
         print("Usage:\n\t %s IPAddr Port" % (sys.argv[0]))
+        print('\t %s URL' % sys.argv[0])
         exit(-1)
 
-    OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
-    OO.myrun()
+    if sys.argv[1].startswith('http'):
+        OO = SimpleHTTPClient(url=sys.argv[1])
+        OO.myrun()
+    else:
+        OO = SimpleHTTPClient(sys.argv[1], sys.argv[2])
+        OO.myrun()
