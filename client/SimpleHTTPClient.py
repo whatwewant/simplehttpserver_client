@@ -58,6 +58,7 @@ class SimpleHTTPClient(object):
         #self.__decode_type = 'utf-8' if decode_type == None else decode_type
         self.__decode_type = None
         self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
+        self.__system_encoding = sys.getdefaultencoding() if sys.getdefaultencoding() != 'mbcs' else 'gbk'
         # All Dirs Count
         self.__target_dir_count = 0
         # All Files Count
@@ -79,7 +80,9 @@ class SimpleHTTPClient(object):
         # print html_requsets_obj.headers.get('Content-Type')
         #self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
         self.__decode_type = html_requsets_obj.encoding if html_requsets_obj.encoding != 'mbcs' else 'gbk'
-        html = html_requsets_obj.content#.decode(self.__decode_type)
+        html = html_requsets_obj.content\
+                .decode(self.__decode_type)\
+                .encode(self.__system_encoding)
         # files_or_directorys = re.findall('<li><a href="(.*)">', html)
         # files_or_directorys = re.findall('">(.*)</a>', html)
         url_compile = re.compile(r'<li><a href="(.*)">')
@@ -95,7 +98,7 @@ class SimpleHTTPClient(object):
         for each in files_urls:
             each = list(each)
             #try:
-            each[0] = each[0].decode(self.__decode_type, 'ignore')
+            each[0] = each[0]#.decode(self.__decode_type, 'ignore')
             #except UnicodeDecodeError:
             #    print each[0].decode(self.__decode_type, 'ignore')
             #    each[0] = each[0].decode(self.__decode_type)
