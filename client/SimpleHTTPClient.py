@@ -100,6 +100,7 @@ class SimpleHTTPClient(object):
         files_urls_list = []
         for each in files_urls:
             each = list(each)
+            each[0] = each[0].replace('?', '')
             if each[0].startswith('.git'):
                 continue
             # Directory
