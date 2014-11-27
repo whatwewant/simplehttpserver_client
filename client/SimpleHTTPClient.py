@@ -67,8 +67,8 @@ class SimpleHTTPClient(object):
         # 要编码成当前系统的编码
         # self.__encode_type = 'utf-8' if 'linux' in sys.platform else 'gbk'
         # 当前系统的编码
-        self.__encode_type = sys.getfilesystemencoding() if \
-                sys.getfilesystemencoding() != 'mbcs' else 'gbk'
+        self.__encode_type = sys.getfilesystemencoding()
+        #        if sys.getfilesystemencoding() != 'mbcs' else 'gbk'
         # All Dirs Count
         self.__target_dir_count = 0
         # All Files Count
