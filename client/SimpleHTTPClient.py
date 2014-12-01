@@ -146,8 +146,10 @@ class SimpleHTTPClient(object):
         file_name = path.split('/').pop()
         file_name_size = len(file_name)
         file_path = path[:-file_name_size-1]
-        (target_size, real_size) = download_url(url, file_name, file_path, int(number), self.__files_number)
+        (target_size, real_size, flag) = download_url(url, file_name, file_path, 
+                                                int(number), self.__files_number)
         self.__real_file_size += real_size
+        return flag
         
     def myrun(self):
         files_urls = self.get_html_recursion(self.__real_url_head, '')
@@ -175,8 +177,8 @@ class SimpleHTTPClient(object):
                         traceback.print_exc(file=f)
                 continue
 
-            self.download(each[1], each[0], i)
-            i += 1
+            if self.download(each[1], each[0], i) >=0 :
+                i += 1
 
         # Files Size
         file_size_unit = 'byte'
