@@ -13,3 +13,7 @@
     * python SimpleHTTPClient IPAddr Port
     * python2 SimpleHTTPClient IPAddr Port
     * python3 SimpleHTTPClient IPAddr Port
+
+# Windows
+Server: [下载](https://github.com/whatwewant/simplehttpserver_client/raw/win/server/HTTPServer_Win.zip)
+Client: [下载](https://github.com/whatwewant/simplehttpserver_client/raw/win/client/HTTPClient_win.zip)
