@@ -273,7 +273,7 @@ def Usage():
 if __name__ == '__main__':
     import getopt
     import socket
-    import fcntl
+    # import fcntl
     import struct
 
     def get_interface_ip(ifname):
