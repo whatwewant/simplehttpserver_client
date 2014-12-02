@@ -259,12 +259,95 @@ def test(HandlerClass = SimpleHTTPRequestHandler,
     BaseHTTPServer.test(HandlerClass, ServerClass)
 
 def Usage():
-    print("Usage:\n\t %s port" % sys.argv[0])
+    print("NAME:")
+    print("  SimpleHTTPServer - The Simple HTTP Server writed by python2\n")
+    print("USAGE:")
+    print("  %s port\n" % sys.argv[0])
+    print("OPTIONS:")
+    print("  -h, --help      Get help about usage and description.")
+    print("  -l, --port      Specified server port.")
+    print("  -p, --path      Specified server in where the files store path.")
+    print("")
+
 
 if __name__ == '__main__':
-    if len(sys.argv) > 2 or len(sys.argv) == 1:
-        Usage()
+    import getopt
+    import socket
+    import fcntl
+    import struct
 
-    if len(sys.argv) == 2 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
-        Usage()
+    def get_interface_ip(ifname):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        return socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915,
+                                struct.pack('256s',
+                                    ifname[:15]))[20:24])
+
+    def get_local_ip():
+        ip = socket.gethostbyname(socket.gethostname())
+        if not ip.startswith('127.'):
+            return ip
+        interfaces = [
+            'eth0',
+            'eth1',
+            'eth2',
+            'wlan0',
+            'wlan1',
+            'wifi0',
+            'ath0',
+            'ath1',
+            'ppp0',
+            'ppp1',
+            'enp3s0',
+            'enp3s1',
+        ]
+        for ifname in interfaces:
+            try:
+                ip = get_interface_ip(ifname)
+                break
+            except IOError:
+                pass
+        return ip
+
+    Location = os.getcwd()
+    try:
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            'hl:p:v',
+            ['help', 'port', 'path', 'version']
+            )
+    except getopt.GetoptError:
+        sys.stdout.write('Error 101\n')
+        sys.stdout.write('%s -h for help\n\n' % sys.argv[0])
+        sys.stdout.flush()
+        sys.exit()
+    
+    port = '8000'
+    path = os.getcwd()
+    for o, a in opts:
+        if o in ('-h', '--help'):
+            Usage()
+            sys.exit()
+        if o in ('-v', '--version'):
+            sys.stdout.write('%s \n' % __version__)
+            sys.stdout.flush()
+            sys.exit()
+        if o in ('-l', '--port'):
+            port = a
+        if o in ('-p', '--path'):
+            path = a
+
+    for arg in sys.argv[1:]:
+        if arg.isdigit():
+            port = arg
+            sys.argv = [sys.argv[0], arg]
+
+    print('Server at: %s:%s' % (get_local_ip(), port))
+    try:
+        os.chdir(path)
+        print('Server Dir: %s' % path)
+    except:
+        print('Server Dir: %s' % os.getcwd())
+    print('')
     test()
+    os.chdir(Location)
+
